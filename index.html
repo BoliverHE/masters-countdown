@@ -1,69 +1,179 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Masters 2026 Countdown</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f4f4f4;
-            color: #333;
-        }
-
-        #countdown {
-            text-align: center;
-            background: #fff;
-            padding: 25px;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        h1 {
-            margin-bottom: 20px;
-        }
-
-        .time {
-            font-size: 24px;
-            font-weight: bold;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Masters 2026 Countdown</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #0a5c2f 0%, #064a25 40%, #003318 100%);
+    font-family: 'Georgia', 'Times New Roman', serif;
+    color: #fff;
+    overflow: hidden;
+  }
+  .container {
+    text-align: center;
+    padding: 40px;
+    max-width: 700px;
+    width: 100%;
+  }
+  .flag {
+    font-size: 48px;
+    margin-bottom: 8px;
+  }
+  .event-name {
+    font-size: 42px;
+    font-weight: bold;
+    color: #fdd835;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
+  .event-year {
+    font-size: 22px;
+    color: rgba(255,255,255,0.7);
+    letter-spacing: 6px;
+    margin-bottom: 6px;
+  }
+  .venue {
+    font-size: 16px;
+    color: rgba(255,255,255,0.55);
+    letter-spacing: 2px;
+    margin-bottom: 40px;
+  }
+  .countdown-row {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    margin-bottom: 36px;
+  }
+  .unit {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 90px;
+  }
+  .number {
+    font-size: 64px;
+    font-weight: bold;
+    line-height: 1;
+    color: #fff;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.4);
+    font-variant-numeric: tabular-nums;
+  }
+  .label {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: rgba(255,255,255,0.5);
+    margin-top: 8px;
+  }
+  .separator {
+    font-size: 48px;
+    color: rgba(255,255,255,0.25);
+    align-self: flex-start;
+    margin-top: 6px;
+  }
+  .dates {
+    font-size: 15px;
+    color: rgba(255,255,255,0.45);
+    letter-spacing: 1px;
+  }
+  .live-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background: #f44336;
+    border-radius: 50%;
+    margin-right: 6px;
+    animation: pulse 1.5s ease-in-out infinite;
+    vertical-align: middle;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.8); }
+  }
+  .live-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,0.4);
+    margin-bottom: 30px;
+  }
+  @media (max-width: 500px) {
+    .number { font-size: 40px; }
+    .event-name { font-size: 28px; }
+    .countdown-row { gap: 12px; }
+    .unit { min-width: 60px; }
+    .separator { font-size: 32px; }
+  }
+</style>
 </head>
-
 <body>
-    <div id="countdown">
-        <h1>Masters 2026 Countdown</h1>
-        <div class="time" id="time"></div>
+<div class="container">
+  <div class="flag">⛳</div>
+  <div class="event-name">The Masters</div>
+  <div class="event-year">2 0 2 6</div>
+  <div class="venue">Augusta National Golf Club</div>
+  <div class="live-label"><span class="live-dot"></span>Live Countdown</div>
+  <div class="countdown-row">
+    <div class="unit">
+      <div class="number" id="days">--</div>
+      <div class="label">Days</div>
     </div>
+    <div class="separator">:</div>
+    <div class="unit">
+      <div class="number" id="hours">--</div>
+      <div class="label">Hours</div>
+    </div>
+    <div class="separator">:</div>
+    <div class="unit">
+      <div class="number" id="minutes">--</div>
+      <div class="label">Minutes</div>
+    </div>
+    <div class="separator">:</div>
+    <div class="unit">
+      <div class="number" id="seconds">--</div>
+      <div class="label">Seconds</div>
+    </div>
+  </div>
+  <div class="dates">April 9 &ndash; 12, 2026</div>
+</div>
+<script>
+  const target = new Date('2026-04-09T08:00:00-04:00').getTime();
 
-    <script>
-        const targetDate = new Date('2026-04-09T12:00:00Z'); // 8 AM EDT
+  function update() {
+    const now = Date.now();
+    const diff = target - now;
 
-        function updateCountdown() {
-            const now = new Date();
-            const timeDifference = targetDate - now;
+    if (diff <= 0) {
+      document.getElementById('days').textContent = '0';
+      document.getElementById('hours').textContent = '0';
+      document.getElementById('minutes').textContent = '0';
+      document.getElementById('seconds').textContent = '0';
+      document.querySelector('.live-label').innerHTML = '🏌️ THE MASTERS HAS BEGUN';
+      return;
+    }
 
-            const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
+    const d = Math.floor(diff / 86400000);
+    const h = Math.floor((diff % 86400000) / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
 
-            document.getElementById('time').innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+    document.getElementById('days').textContent = d;
+    document.getElementById('hours').textContent = String(h).padStart(2, '0');
+    document.getElementById('minutes').textContent = String(m).padStart(2, '0');
+    document.getElementById('seconds').textContent = String(s).padStart(2, '0');
+  }
 
-            if (timeDifference < 0) {
-                clearInterval(countdownInterval);
-                document.getElementById('time').innerHTML = "The Masters has started!";
-            }
-        }
-
-        const countdownInterval = setInterval(updateCountdown, 1000);
-        updateCountdown();
-    </script>
+  update();
+  setInterval(update, 1000);
+</script>
 </body>
-
 </html>
